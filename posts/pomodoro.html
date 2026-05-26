@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>The Pomodoro app nobody asked for — Riyasat's Journal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Fraunces:ital,wght@0,400;1,400&family=Host+Grotesk:wght@400;600&family=Caveat:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --sky-top:   #3a6bca;
+    --sky-mid:   #6fa0e8;
+    --sky-fade:  #c8daf7;
+    --sky-white: #f0f5ff;
+    --off-white: #fafafa;
+    --text-dark: #101010;
+    --text-mid:  #555;
+    --text-light:#888;
+    --font-serif:  'Playfair Display', Georgia, serif;
+    --font-display:'Fraunces', Georgia, serif;
+    --font-body:   'Host Grotesk', sans-serif;
+    --font-hand:   'Caveat', cursive;
+  }
+
+  html { scroll-behavior: smooth; min-width: 320px; }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--off-white);
+    color: var(--text-dark);
+    overflow-x: hidden;
+    opacity: 0;
+    animation: pageFade 0.4s ease forwards 0.05s;
+  }
+
+  @keyframes pageFade { to { opacity: 1; } }
+
+  /* ─── NAV ─── */
+  nav {
+    position: fixed;
+    top: 0; left: 50%;
+    transform: translateX(-50%);
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    gap: 40px;
+    padding: 10px 28px;
+    margin-top: 14px;
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 100px;
+    transition: background 0.3s;
+  }
+  nav.scrolled {
+    background: rgba(255,255,255,0.85);
+    border-color: rgba(0,0,0,0.08);
+  }
+  nav a {
+    font-family: var(--font-serif);
+    font-size: 13.5px;
+    color: white;
+    text-decoration: none;
+    opacity: 0.9;
+    position: relative;
+    transition: opacity 0.2s;
+  }
+  nav a::after {
+    content: '';
+    position: absolute;
+    bottom: -3px;
+    left: 0;
+    right: 0;
+    height: 1.5px;
+    background: currentColor;
+    border-radius: 2px;
+    transform: scaleX(0);
+    transform-origin: center;
+    transition: transform 0.25s ease;
+  }
+  nav.scrolled a { color: var(--text-dark); }
+  nav a:hover { opacity: 1; }
+  nav a:hover::after { transform: scaleX(1); }
+  .nav-logo {
+    font-family: var(--font-display);
+    font-size: 17px;
+    letter-spacing: 0.05em;
+    font-style: italic;
+    color: white;
+    text-decoration: none;
+  }
+  nav.scrolled .nav-logo { color: var(--text-dark); }
+  .nav-left, .nav-right { display: flex; gap: 28px; align-items: center; }
+  nav a.nav-active { opacity: 1; position: relative; }
+  nav a.nav-active::after {
+    content: '';
+    position: absolute;
+    bottom: -3px; left: 0; right: 0;
+    height: 1.5px;
+    background: currentColor;
+    border-radius: 2px;
+    opacity: 0.7;
+  }
+
+  /* ─── POST LAYOUT ─── */
+  .post-page {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 120px 32px 100px;
+  }
+
+  /* Back link */
+  .post-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--text-light);
+    text-decoration: none;
+    margin-bottom: 48px;
+    transition: color 0.15s, gap 0.15s;
+  }
+  .post-back:hover { color: var(--text-dark); gap: 8px; }
+
+  /* Header */
+  .post-header {
+    margin-bottom: 48px;
+    padding-bottom: 32px;
+    border-bottom: 1px solid #e6e6e6;
+  }
+
+  /* Mood badge */
+  .post-mood-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 5px 13px 5px 9px;
+    background: #f3f3f3;
+    border-radius: 100px;
+    font-size: 12.5px;
+    color: var(--text-mid);
+    margin-bottom: 22px;
+  }
+  .badge-mascot {
+    width: 45px;
+    height: 45px;
+    object-fit: contain;
+    border-radius: 50%;
+  }
+
+  .post-title {
+    font-family: var(--font-serif);
+    font-size: clamp(28px, 5vw, 44px);
+    font-weight: 400;
+    line-height: 1.2;
+    color: var(--text-dark);
+    margin-bottom: 18px;
+  }
+  .post-title em {
+    font-family: var(--font-display);
+    font-style: italic;
+  }
+
+  .post-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 12.5px;
+    color: var(--text-light);
+    flex-wrap: wrap;
+  }
+  .meta-dot { opacity: 0.35; }
+
+  .post-type {
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 3px 9px;
+    border-radius: 4px;
+  }
+  .type-essay   { background: #e8f0ff; color: #2255aa; }
+  .type-snippet { background: #e8f8f0; color: #1a7a3a; }
+  .type-entry   { background: #fff4e8; color: #c45e1a; }
+  .type-note    { background: #f5f0ff; color: #6633aa; }
+
+  /* ─── READING BODY ─── */
+  .post-body {
+    font-size: 17px;
+    line-height: 1.78;
+    color: #1c1c1c;
+  }
+  .post-body p         { margin-bottom: 1.45em; }
+  .post-body h2 {
+    font-family: var(--font-serif);
+    font-size: 23px;
+    font-weight: 400;
+    margin: 2.2em 0 0.7em;
+    color: var(--text-dark);
+  }
+  .post-body h3 {
+    font-family: var(--font-serif);
+    font-size: 19px;
+    font-weight: 400;
+    margin: 1.8em 0 0.5em;
+  }
+  .post-body strong    { font-weight: 600; }
+  .post-body em        { font-style: italic; }
+  .post-body a         { color: #2255aa; text-decoration: underline; text-underline-offset: 3px; }
+  .post-body code {
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    background: #f0f0f0;
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+  .post-body pre {
+    background: #f6f6f6;
+    border: 1px solid #e4e4e4;
+    border-radius: 10px;
+    padding: 22px;
+    overflow-x: auto;
+    margin: 1.6em 0;
+  }
+  .post-body pre code { background: none; padding: 0; font-size: 13.5px; line-height: 1.6; }
+  .post-body blockquote {
+    border-left: 3px solid #d0d0d0;
+    padding-left: 20px;
+    margin: 1.6em 0;
+    color: var(--text-mid);
+    font-style: italic;
+    font-family: var(--font-serif);
+  }
+  .post-body hr {
+    border: none;
+    border-top: 1px solid #e6e6e6;
+    margin: 2.4em 0;
+  }
+  .post-body ul {
+    margin: 0 0 1.45em 1.2em;
+    padding: 0;
+  }
+  .post-body ul li {
+    margin-bottom: 0.45em;
+    padding-left: 0.3em;
+  }
+  .post-img-top {
+    display: block;
+    width: 100%;
+    max-width: 420px;
+    margin: 0 auto 2em;
+    border-radius: 12px;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.1);
+  }
+
+  /* ─── FOOTER ─── */
+  .post-footer {
+    margin-top: 72px;
+    padding-top: 28px;
+    border-top: 1px solid #e6e6e6;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .post-footer a {
+    font-size: 13px;
+    color: var(--text-light);
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+  .post-footer a:hover { color: var(--text-dark); }
+  .post-footer-date { font-size: 12px; color: #ccc; }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 600px) {
+    .post-page { padding: 100px 20px 72px; }
+    .post-body  { font-size: 16px; }
+    nav { gap: 16px; padding: 8px 16px; }
+    .nav-left, .nav-right { gap: 14px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ─── NAV ─── -->
+<nav id="mainNav">
+  <div class="nav-left">
+    <a href="mailto:riyasatzaman@gmail.com?subject=Work%20Opportunity">Let's Connect</a>
+    <a href="../index.html#work">Work</a>
+  </div>
+  <a href="../index.html" class="nav-logo">riyasat</a>
+  <div class="nav-right">
+    <a href="../index.html#about">About</a>
+    <a href="../blog.html" class="nav-active">Journal</a>
+  </div>
+</nav>
+
+<!-- ─── POST ─── -->
+<article class="post-page">
+
+  <a href="../blog.html" class="post-back">← Back to Journal</a>
+
+  <header class="post-header">
+    <div class="post-mood-badge">
+      <img class="badge-mascot" src="../assets/excited.png" alt="excited">
+      excited
+    </div>
+
+    <h1 class="post-title">The Pomodoro app nobody <em>asked for</em></h1>
+
+    <div class="post-meta">
+      <span class="post-type type-snippet">snippet</span>
+      <span class="meta-dot">·</span>
+      <span>May 20, 2026</span>
+      <span class="meta-dot">·</span>
+      <span>4 min read</span>
+    </div>
+  </header>
+
+  <!-- ─────────────────────────────────────────────────────────────────────
+       POST CONTENT — replace everything below with your actual writing.
+       Supported elements: <p>, <h2>, <h3>, <strong>, <em>, <a>,
+       <code>, <pre><code>, <blockquote>, <hr>
+  ───────────────────────────────────────────────────────────────────────── -->
+  <div class="post-body">
+    <img class="post-img-top" src="../assets/pomodoro.jpg" alt="FocusPilot pomodoro app" loading="lazy">
+
+    <p>The internet does not need another Pomodoro timer. Seriously, there are thousands of them out there. Yet, here we are. I went ahead and built another one anyway.</p>
+
+    <p>Why? Because watching a digital tomato slowly tick down just wasn't giving me the psychological dopamine hit required to finish my assignments.</p>
+
+    <p>I wanted something that made sitting at my desk feel less like a corporate chore and more like playing a video game. I grew up on Pokémon, and like anyone else who has read Solo Leveling, I secretly just want a floating blue interface telling me I gained experience points after doing basic tasks.</p>
+
+    <p>So, I built <strong>FocusPilot</strong> — a gamified productivity system designed to turn real-life study blocks into an RPG progression experience.</p>
+
+    <h2>The Solo Leveling Mechanics</h2>
+
+    <p>Instead of just checking items off a boring to-do list, FocusPilot lets you level up a pixel-art pilot mascot. The app tracks five core stats:</p>
+
+    <ul>
+      <li>Strength</li>
+      <li>Skills</li>
+      <li>Intelligence</li>
+      <li>Vitality</li>
+      <li>Senses</li>
+    </ul>
+
+    <p>These stats grow based on the specific categories of the tasks you complete. Spend an hour grinding out clean backend code, and your Intelligence and Skills will flash with an animated stat gain on your dashboard.</p>
+
+    <p>To keep you honest and prevent you from gaming the system, the experience point rewards scale up the longer you stay locked in. You get 25 XP for your first cycle, but that ramps up incrementally all the way to 100 XP if you maintain a strict focus streak.</p>
+
+    <h2>Engineering Around Friction</h2>
+
+    <p>There is nothing worse than an app that breaks your flow. Most web-based timers reset if you accidentally close the tab or look away to change a song. To fix this, I engineered a background timer system that maintains accurate session states across navigation, full page reloads, and app changes.</p>
+
+    <p>I also added a live countdown bubble directly on the home screen, giving you a quick visual indicator of your active session without forcing you to keep the main timer view open.</p>
+
+    <p>To complete the feedback loop, I built a custom Reward Shop. You earn points from finishing focus sessions, which you can then redeem for real-life treats. Want a premium coffee or an hour of video games? You have to earn the point cost first. When you finally hit redeem, the screen triggers a literal confetti burst. It is childish, absolutely, but it works. During evaluation sessions, users actually reported a <strong>40 to 50 minute improvement</strong> in their daily focus duration.</p>
+
+    <h2>Under the Hood</h2>
+
+    <p>Architecturally, I wanted this to be fast, lightweight, and completely private.</p>
+
+    <ul>
+      <li><strong>Frontend:</strong> Built with React 19, TypeScript, and Vite for a lightning-fast build pipeline.</li>
+      <li><strong>State Management:</strong> Handled entirely via Zustand using local storage persistence. Your character stats, session history, and notes never touch a third-party server — they live entirely on your machine.</li>
+      <li><strong>Audio:</strong> Instead of loading heavy MP3 files for system alerts, I used the Web Audio API to procedurally generate chiptune blips, giving it a tactile, retro handheld feel.</li>
+    </ul>
+
+    <hr>
+
+    <p>Is it a revolutionary concept? Maybe not. But it is a fast, dependency-light single-page application that turned my study environment into a sandbox game. The project is completely open-source, so if you want to clone the repository or level up your own real-world stats, you can jump right into the <a href="https://focuspilot-ijpz.vercel.app/" target="_blank" rel="noopener">Live Demo</a>.</p>
+  </div>
+  <!-- ─── END CONTENT ─── -->
+
+  <footer class="post-footer">
+    <a href="../blog.html">← All entries</a>
+    <span class="post-footer-date">May 2026</span>
+  </footer>
+
+</article>
+
+<script>
+  const nav = document.getElementById('mainNav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 20);
+  }, { passive: true });
+</script>
+
+</body>
+</html>

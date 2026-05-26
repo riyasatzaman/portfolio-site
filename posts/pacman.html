@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Building a Pac-Man Level Generator — Riyasat's Journal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Fraunces:ital,wght@0,400;1,400&family=Host+Grotesk:wght@400;600&family=Caveat:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --sky-top:   #3a6bca;
+    --sky-mid:   #6fa0e8;
+    --sky-fade:  #c8daf7;
+    --sky-white: #f0f5ff;
+    --off-white: #fafafa;
+    --text-dark: #101010;
+    --text-mid:  #555;
+    --text-light:#888;
+    --font-serif:  'Playfair Display', Georgia, serif;
+    --font-display:'Fraunces', Georgia, serif;
+    --font-body:   'Host Grotesk', sans-serif;
+    --font-hand:   'Caveat', cursive;
+  }
+
+  html { scroll-behavior: smooth; min-width: 320px; }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--off-white);
+    color: var(--text-dark);
+    overflow-x: hidden;
+    opacity: 0;
+    animation: pageFade 0.4s ease forwards 0.05s;
+  }
+
+  @keyframes pageFade { to { opacity: 1; } }
+
+  /* ─── NAV ─── */
+  nav {
+    position: fixed;
+    top: 0; left: 50%;
+    transform: translateX(-50%);
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    gap: 40px;
+    padding: 10px 28px;
+    margin-top: 14px;
+    background: rgba(255,255,255,0.18);
+    border-radius: 100px;
+    transition: background 0.3s, box-shadow 0.3s;
+  }
+  nav.scrolled {
+    background: rgba(255,255,255,0.92);
+    box-shadow: 0 2px 24px rgba(0,0,0,0.09);
+  }
+  nav a {
+    font-family: var(--font-serif);
+    font-size: 13.5px;
+    color: white;
+    text-decoration: none;
+    opacity: 0.9;
+    position: relative;
+    transition: opacity 0.2s;
+  }
+  nav a::after {
+    content: '';
+    position: absolute;
+    bottom: -3px;
+    left: 0;
+    right: 0;
+    height: 1.5px;
+    background: currentColor;
+    border-radius: 2px;
+    transform: scaleX(0);
+    transform-origin: center;
+    transition: transform 0.25s ease;
+  }
+  nav.scrolled a { color: var(--text-dark); }
+  nav a:hover { opacity: 1; }
+  nav a:hover::after { transform: scaleX(1); }
+  .nav-logo {
+    font-family: var(--font-display);
+    font-size: 17px;
+    letter-spacing: 0.05em;
+    font-style: italic;
+    color: white;
+    text-decoration: none;
+  }
+  nav.scrolled .nav-logo { color: var(--text-dark); }
+  .nav-left, .nav-right { display: flex; gap: 28px; align-items: center; }
+  nav a.nav-active { opacity: 1; position: relative; }
+  nav a.nav-active::after {
+    content: '';
+    position: absolute;
+    bottom: -3px; left: 0; right: 0;
+    height: 1.5px;
+    background: currentColor;
+    border-radius: 2px;
+    opacity: 0.7;
+  }
+
+  /* ─── POST LAYOUT ─── */
+  .post-page {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 120px 32px 100px;
+  }
+
+  /* Back link */
+  .post-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--text-light);
+    text-decoration: none;
+    margin-bottom: 48px;
+    transition: color 0.15s, gap 0.15s;
+  }
+  .post-back:hover { color: var(--text-dark); gap: 8px; }
+
+  /* Header */
+  .post-header {
+    margin-bottom: 48px;
+    padding-bottom: 32px;
+    border-bottom: 1px solid #e6e6e6;
+  }
+
+  /* Mood badge */
+  .post-mood-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 5px 13px 5px 9px;
+    background: #f3f3f3;
+    border-radius: 100px;
+    font-size: 12.5px;
+    color: var(--text-mid);
+    margin-bottom: 22px;
+  }
+  .badge-mascot {
+    width: 45px;
+    height: 45px;
+    object-fit: contain;
+    border-radius: 50%;
+  }
+
+  .post-title {
+    font-family: var(--font-serif);
+    font-size: clamp(28px, 5vw, 44px);
+    font-weight: 400;
+    line-height: 1.2;
+    color: var(--text-dark);
+    margin-bottom: 18px;
+  }
+  .post-title em {
+    font-family: var(--font-display);
+    font-style: italic;
+  }
+
+  .post-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 12.5px;
+    color: var(--text-light);
+    flex-wrap: wrap;
+  }
+  .meta-dot { opacity: 0.35; }
+
+  .post-type {
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 3px 9px;
+    border-radius: 4px;
+  }
+  .type-essay      { background: #e8f0ff; color: #2255aa; }
+  .type-snippet    { background: #e8f8f0; color: #1a7a3a; }
+  .type-entry      { background: #fff4e8; color: #c45e1a; }
+  .type-note       { background: #f5f0ff; color: #6633aa; }
+  .type-case-study { background: #e5f8f6; color: #0d7a6e; }
+
+  /* ─── READING BODY ─── */
+  .post-body {
+    font-size: 17px;
+    line-height: 1.78;
+    color: #1c1c1c;
+  }
+  .post-body p         { margin-bottom: 1.45em; }
+  .post-body h2 {
+    font-family: var(--font-serif);
+    font-size: 23px;
+    font-weight: 400;
+    margin: 2.2em 0 0.7em;
+    color: var(--text-dark);
+  }
+  .post-body h3 {
+    font-family: var(--font-serif);
+    font-size: 19px;
+    font-weight: 400;
+    margin: 1.8em 0 0.5em;
+  }
+  .post-body strong    { font-weight: 600; }
+  .post-body em        { font-style: italic; }
+  .post-body a         { color: #2255aa; text-decoration: underline; text-underline-offset: 3px; }
+  .post-body ul {
+    margin: 0 0 1.45em 1.2em;
+    padding: 0;
+  }
+  .post-body ul li {
+    margin-bottom: 0.5em;
+    padding-left: 0.3em;
+  }
+  .post-body code {
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    background: #f0f0f0;
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+  .post-body pre {
+    background: #1a1a2e;
+    border-radius: 10px;
+    padding: 22px;
+    overflow-x: auto;
+    margin: 1.6em 0;
+  }
+  .post-body pre code {
+    background: none;
+    padding: 0;
+    font-size: 13.5px;
+    line-height: 1.6;
+    color: #a8d8a8;
+  }
+  .code-label {
+    display: inline-block;
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-light);
+    margin-bottom: 6px;
+  }
+  .post-body blockquote {
+    border-left: 3px solid #d0d0d0;
+    padding-left: 20px;
+    margin: 1.6em 0;
+    color: var(--text-mid);
+    font-style: italic;
+    font-family: var(--font-serif);
+  }
+  .post-body hr {
+    border: none;
+    border-top: 1px solid #e6e6e6;
+    margin: 2.4em 0;
+  }
+
+  /* ─── FOOTER ─── */
+  .post-footer {
+    margin-top: 72px;
+    padding-top: 28px;
+    border-top: 1px solid #e6e6e6;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .post-footer a {
+    font-size: 13px;
+    color: var(--text-light);
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+  .post-footer a:hover { color: var(--text-dark); }
+  .post-footer-date { font-size: 12px; color: #ccc; }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 600px) {
+    .post-page { padding: 100px 20px 72px; }
+    .post-body  { font-size: 16px; }
+    nav { gap: 16px; padding: 8px 16px; }
+    .nav-left, .nav-right { gap: 14px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ─── NAV ─── -->
+<nav id="mainNav">
+  <div class="nav-left">
+    <a href="mailto:riyasatzaman@gmail.com?subject=Work%20Opportunity">Let's Connect</a>
+    <a href="../index.html#work">Work</a>
+  </div>
+  <a href="../index.html" class="nav-logo">riyasat</a>
+  <div class="nav-right">
+    <a href="../index.html#about">About</a>
+    <a href="../blog.html" class="nav-active">Journal</a>
+  </div>
+</nav>
+
+<!-- ─── POST ─── -->
+<article class="post-page">
+
+  <a href="../index.html#work" class="post-back">← Back to Work</a>
+
+  <header class="post-header">
+    <div class="post-mood-badge">
+      <img class="badge-mascot" src="../assets/focused.png" alt="focused">
+      focused
+    </div>
+
+    <h1 class="post-title">Building a Pac-Man Level Generator <em>(That Doesn't Build Broken Maps)</em></h1>
+
+    <div class="post-meta">
+      <span class="post-type type-case-study">case study</span>
+      <span class="meta-dot">·</span>
+      <span>December 2025</span>
+      <span class="meta-dot">·</span>
+      <span>4 min read</span>
+    </div>
+  </header>
+
+  <div class="post-body">
+    <p>The premise of this project was simple: investigate whether a machine-learning-inspired probabilistic approach could automatically generate new, playable Pac-Man levels.</p>
+
+    <p>Instead of hand-crafting every map, I wanted a system that could look at original retro layouts, learn why they worked, and spin up brand-new ones on demand.</p>
+
+    <h2>The Strategy: Spatial Markov Chains</h2>
+
+    <p>A standard Markov Chain is usually used for sequences, predicting the next state based on the previous one. To make this work for a 2D grid-based arcade map, the generator had to predict what tile should appear at a specific position based on its local neighbors.</p>
+
+    <p>If a pure local model is left to its own devices, it completely loses the plot and forgets the global structure — it starts putting ghost chambers in random corners. To fix this, I engineered an enhanced contextual state by looking at five distinct features:</p>
+
+    <ul>
+      <li>The tile to the left</li>
+      <li>The tile directly above</li>
+      <li>The upper-left diagonal tile</li>
+      <li>The horizontal region (divided into thirds)</li>
+      <li>The vertical region (divided into thirds)</li>
+    </ul>
+
+    <p>By adding those horizontal and vertical regions, the generator learned global context: top regions tend to contain long horizontal wall structures, center regions need a dedicated ghost chamber, and lower regions should be more open for player traversal.</p>
+
+    <span class="code-label">C#</span>
+    <pre><code>// The DNA of a tile position
+markovState += leftTile + upperTile + upperLeftTile + yThird + xThird;</code></pre>
+
+    <p>During training, the system crunched existing maps, counted which tiles followed which states, and normalized those numbers into valid probability distributions. When generating a level, it samples these probabilities tile-by-tile, introducing controlled randomness without creating utter chaos.</p>
+
+    <h2>The Core Challenges</h2>
+
+    <ul>
+      <li><strong>The Balancing Act:</strong> If you give the state representation too much information, it creates unique, hyper-specific states. During generation, the system hits an "unseen state," gets confused, and falls back to default behavior. I had to carefully balance specificity with generalizability.</li>
+      <li><strong>Local vs. Global:</strong> Because Markov Chains only model local spatial relationships, they don't inherently understand high-level concepts like "is there a valid path from point A to point B?"</li>
+    </ul>
+
+    <p>The final evaluated models generalized beautifully, hitting a test score of <strong>~0.798</strong>. This proved the system was actively capturing meaningful structural layouts rather than just memorizing and copying the training maps.</p>
+
+    <h2>Going Rogue: The Rule-Based Generator</h2>
+
+    <p>Alongside the learned Markov model, I implemented an extra-credit procedural generator that took the opposite approach: strict, handcrafted rules.</p>
+
+    <p>Instead of relying on probabilities, this generator guarantees a classic arcade feel by using clean, hardcoded layout constraints:</p>
+
+    <ul>
+      <li><strong>Perfect Symmetry:</strong> It automatically mirrors left-side structures over to the right side, ensuring visual balance.</li>
+      <li><strong>Spawn Safety:</strong> It uses explicitly reserved zones to completely ban obstacles from spawning anywhere near Pac-Man or the central ghost chamber.</li>
+      <li><strong>Dynamic Layouts:</strong> While the rules are strict, the dimensions, pillar counts, and corridor lengths are completely randomized on every single run.</li>
+    </ul>
+
+    <h2>Future Improvements</h2>
+
+    <p>While the current generator builds some incredibly nostalgic layouts, there are a few things I'd love to add next:</p>
+
+    <ul>
+      <li><strong>Pathfinding & Connectivity Validation:</strong> Adding an automated pathfinding check would guarantee every single pellet is actually reachable — right now, the Markov model could theoretically trap a ghost behind a solid wall.</li>
+      <li><strong>Incremental Complexity Scaling:</strong> Tying the probability matrices directly to game difficulty, generating tighter, more claustrophobic corridors as the player advances to higher levels.</li>
+      <li><strong>Hybrid Generation:</strong> Using the rule-based generator to lay down a perfectly symmetric, safe base layout, and letting the Markov Chain fill in the creative details.</li>
+    </ul>
+
+    <h2>The Takeaway</h2>
+
+    <p>Local statistical models can generate surprisingly believable, highly replayable game content if you design the underlying state representation with enough care.</p>
+
+    <hr>
+
+    <p>The project is fully functional inside Unity, proving that you don't always need a heavy, unoptimized neural network to generate smart content. Sometimes, a well-tuned probability matrix and some clever spatial logic are all it takes to keep the ghosts moving.</p>
+  </div>
+
+  <footer class="post-footer">
+    <a href="../index.html#work">← Back to Work</a>
+    <span class="post-footer-date">December 2025</span>
+  </footer>
+
+</article>
+
+<script>
+  const nav = document.getElementById('mainNav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 20);
+  }, { passive: true });
+</script>
+
+</body>
+</html>

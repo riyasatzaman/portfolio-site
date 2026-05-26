@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Riyasat — Software & Data Engineer</title>
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie_light.min.js"></script>
+<script src="assets/birds.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" as="image" href="assets/avatar.webp" fetchpriority="high">
@@ -154,6 +156,19 @@
     position: absolute;
     opacity: 0.7;
     pointer-events: none;
+  }
+
+  /* Lottie birds layer */
+  #birds-lottie {
+    position: absolute;
+    top: 80px;
+    left: 0;
+    width: 100%;
+    height: auto;
+    pointer-events: none;
+    opacity: 0.85;
+    mix-blend-mode: multiply;
+    z-index: 1;
   }
 
   .hero-inner {
@@ -690,6 +705,18 @@
   }
 
   .about-birds { position: absolute; pointer-events: none; }
+
+  #birds-lottie-about {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: auto;
+    pointer-events: none;
+    opacity: 0.85;
+    mix-blend-mode: multiply;
+    z-index: 1;
+  }
 
   /* Letter collage */
   .letter-scene {
@@ -1537,13 +1564,8 @@
   <div class="cloud cloud-2"></div>
   <div class="cloud cloud-3"></div>
 
-  <!-- Birds -->
-  <svg class="bird" style="top:18%;left:38%;animation:birdfly 3s ease-in-out infinite;" width="20" height="12" viewBox="0 0 20 12" fill="none">
-    <path d="M1 8 C4 2, 8 2, 10 6 C12 2, 16 2, 19 8" stroke="white" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-  </svg>
-  <svg class="bird" style="top:60%;right:20%;animation:birdfly 3.5s ease-in-out infinite 0.5s;opacity:0.4;" width="14" height="9" viewBox="0 0 20 12" fill="none">
-    <path d="M1 8 C4 2, 8 2, 10 6 C12 2, 16 2, 19 8" stroke="white" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-  </svg>
+  <!-- Lottie birds animation -->
+  <div id="birds-lottie"></div>
 
   <div class="hero-inner">
     <div class="status-badge">
@@ -1763,15 +1785,8 @@
 
 <!-- ─── ABOUT ─── -->
 <section id="about">
-  <svg class="about-birds" style="top:14%;left:10%;" width="22" height="13" viewBox="0 0 20 12" fill="none">
-    <path d="M1 8 C4 2, 8 2, 10 6 C12 2, 16 2, 19 8" stroke="white" stroke-width="1.4" fill="none" stroke-linecap="round"/>
-  </svg>
-  <svg class="about-birds" style="top:25%;right:12%;opacity:0.5;" width="16" height="10" viewBox="0 0 20 12" fill="none">
-    <path d="M1 8 C4 2, 8 2, 10 6 C12 2, 16 2, 19 8" stroke="white" stroke-width="1.4" fill="none" stroke-linecap="round"/>
-  </svg>
-  <svg class="about-birds" style="top:50%;left:5%;opacity:0.4;" width="14" height="8" viewBox="0 0 20 12" fill="none">
-    <path d="M1 8 C4 2, 8 2, 10 6 C12 2, 16 2, 19 8" stroke="white" stroke-width="1.4" fill="none" stroke-linecap="round"/>
-  </svg>
+  <!-- Lottie birds animation -->
+  <div id="birds-lottie-about"></div>
 
   <div class="letter-scene reveal">
     <!-- Top-left cluster: portrait + secondary photo behind/below -->
@@ -2303,6 +2318,24 @@
       void ctaPhoto.offsetWidth;
       ctaPhoto.classList.add('is-wiggling');
       playBoop();
+    });
+  }
+
+  // ─── Lottie birds ───
+  if (typeof lottie !== 'undefined' && window.birdsAnimationData) {
+    lottie.loadAnimation({
+      container: document.getElementById('birds-lottie'),
+      renderer: 'svg',
+      loop: true,
+      autoplay: true,
+      animationData: window.birdsAnimationData
+    });
+    lottie.loadAnimation({
+      container: document.getElementById('birds-lottie-about'),
+      renderer: 'svg',
+      loop: true,
+      autoplay: true,
+      animationData: window.birdsAnimationData
     });
   }
 </script>

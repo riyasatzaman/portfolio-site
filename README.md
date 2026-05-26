@@ -1,4 +1,6 @@
-# riyasat.dev — personal portfolio
+# riyasatzaman.dev — personal portfolio
+
+Live at **[riyasatzaman.dev](https://riyasatzaman.dev)**
 
 Personal portfolio and journal built with vanilla HTML, CSS, and JavaScript. No frameworks, no build step.
 

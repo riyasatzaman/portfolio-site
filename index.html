@@ -259,7 +259,7 @@
 
   .char-card {
     position: relative;
-    width: 130px;
+    width: 115px;
     margin: 32px auto 0;
     transform: rotate(-6deg);
     transform-origin: center;
@@ -330,7 +330,13 @@
     font-style: italic;
     font-size: 36px;
     color: var(--text-dark);
-    margin-bottom: 40px;
+    margin-bottom: 12px;
+  }
+
+  .section-sublabel {
+    font-size: 15px;
+    color: var(--text-light);
+    margin-bottom: 32px;
   }
 
   /* ─── SELECTED WORK / BENTO ─── */
@@ -959,7 +965,7 @@
     position: absolute;
     top: -24px;
     left: calc(100% + 10px);
-    width: 185px;
+    width: 170px;
     transform: rotate(-2.5deg);
     pointer-events: none;
     filter: drop-shadow(1px 2px 4px rgba(0,0,0,0.13));
@@ -1118,7 +1124,9 @@
     display: flex;
     flex-wrap: wrap;
     gap: 9px;
-    margin-top: 18px;
+    padding-top: 14px;
+    padding-bottom: 6px;
+    min-height: 0;
   }
 
   .skill-pill {
@@ -1193,18 +1201,52 @@
 
   /* ─── SKILL GROUPS ─── */
   .skill-group {
-    margin-bottom: 26px;
+    margin-bottom: 4px;
+    border-bottom: 1px solid #ebebeb;
   }
-  .skill-group:last-child { margin-bottom: 0; }
+  .skill-group:last-child { margin-bottom: 0; border-bottom: none; }
 
   .skill-group-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    background: none;
+    border: none;
+    padding: 13px 0;
+    cursor: pointer;
     font-family: var(--font-body);
     font-size: 11px;
     font-weight: 600;
     letter-spacing: 0.09em;
     text-transform: uppercase;
     color: #aaa;
-    margin-bottom: 11px;
+    margin: 0;
+    transition: color 0.18s ease;
+  }
+  .skill-group-heading:hover { color: #777; }
+
+  .skill-group-chevron {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+    transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+    opacity: 0.55;
+    color: currentColor;
+  }
+  .skill-group.is-open .skill-group-chevron {
+    transform: rotate(180deg);
+  }
+
+  /* Smooth pill reveal via grid trick */
+  .skill-pills-outer {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+    overflow: hidden;
+  }
+  .skill-group.is-open .skill-pills-outer {
+    grid-template-rows: 1fr;
   }
 
   /* ─── FOOTER ─── */
@@ -1751,6 +1793,7 @@
     -->
     <div id="sideworks">
       <div class="section-label reveal">Side Quests</div>
+      <p class="section-sublabel reveal">Smaller builds, experiments, and notes that still taught me something.</p>
       <ul class="side-list reveal">
         <li class="side-item">
           <a class="side-link" href="posts/over-engineering.html">
@@ -1906,8 +1949,8 @@
 
       <!-- ── Group 1: Development & Frameworks ── -->
       <div class="skill-group">
-        <div class="skill-group-heading">Development &amp; Frameworks</div>
-        <div class="skills-cloud">
+        <button class="skill-group-heading" aria-expanded="false">Development &amp; Frameworks<svg class="skill-group-chevron" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 6l5 5 5-5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <div class="skill-pills-outer"><div class="skills-cloud">
 
           <div class="skill-pill">
             <span class="skill-icon-box" data-icon="html" style="--icon-color:#E34F26">
@@ -1982,13 +2025,13 @@
             <span class="skill-label">Java / C++ / R</span>
           </div>
 
-        </div>
+        </div></div>
       </div>
 
       <!-- ── Group 2: Data Engineering & Analytics ── -->
       <div class="skill-group">
-        <div class="skill-group-heading">Data Engineering &amp; Analytics</div>
-        <div class="skills-cloud">
+        <button class="skill-group-heading" aria-expanded="false">Data Engineering &amp; Analytics<svg class="skill-group-chevron" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 6l5 5 5-5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <div class="skill-pills-outer"><div class="skills-cloud">
 
           <!-- python.svg not available — keeping placeholder -->
           <div class="skill-pill">
@@ -2034,13 +2077,13 @@
             <span class="skill-label">Streamlit</span>
           </div>
 
-        </div>
+        </div></div>
       </div>
 
       <!-- ── Group 3: AI & Machine Learning ── -->
       <div class="skill-group">
-        <div class="skill-group-heading">AI &amp; Machine Learning</div>
-        <div class="skills-cloud">
+        <button class="skill-group-heading" aria-expanded="false">AI &amp; Machine Learning<svg class="skill-group-chevron" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 6l5 5 5-5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <div class="skill-pills-outer"><div class="skills-cloud">
 
           <div class="skill-pill">
             <span class="skill-icon-box" data-icon="pytorch" style="--icon-color:#EE4C2C">
@@ -2069,13 +2112,13 @@
             <span class="skill-label">ChatGPT / Claude</span>
           </div>
 
-        </div>
+        </div></div>
       </div>
 
       <!-- ── Group 4: Databases & Infrastructure ── -->
       <div class="skill-group">
-        <div class="skill-group-heading">Databases &amp; Infrastructure</div>
-        <div class="skills-cloud">
+        <button class="skill-group-heading" aria-expanded="false">Databases &amp; Infrastructure<svg class="skill-group-chevron" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 6l5 5 5-5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <div class="skill-pills-outer"><div class="skills-cloud">
 
           <div class="skill-pill">
             <span class="skill-icon-box" data-icon="postgresql" style="--icon-color:#4169E1">
@@ -2127,13 +2170,13 @@
             <span class="skill-label">Linux / NGINX / CI/CD</span>
           </div>
 
-        </div>
+        </div></div>
       </div>
 
       <!-- ── Group 5: Creative & Productivity ── -->
       <div class="skill-group">
-        <div class="skill-group-heading">Creative &amp; Productivity</div>
-        <div class="skills-cloud">
+        <button class="skill-group-heading" aria-expanded="false">Creative &amp; Productivity<svg class="skill-group-chevron" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 6l5 5 5-5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <div class="skill-pills-outer"><div class="skills-cloud">
 
           <div class="skill-pill">
             <span class="skill-icon-box" data-icon="photoshop" style="--icon-color:#31A8FF">
@@ -2155,7 +2198,7 @@
             <span class="skill-label">Notion / Slack</span>
           </div>
 
-        </div>
+        </div></div>
       </div>
     </div>
   </div>
@@ -2330,6 +2373,15 @@
       animationData: window.birdsAnimationData
     });
   }
+
+  // Skills accordion
+  document.querySelectorAll('.skill-group-heading').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const group = btn.closest('.skill-group');
+      const isOpen = group.classList.toggle('is-open');
+      btn.setAttribute('aria-expanded', String(isOpen));
+    });
+  });
 </script>
 </body>
 </html>

@@ -800,11 +800,15 @@
   /* Polaroids sit just inside the scene, overlapping the visible torn-paper edges.
      Scene is 1100px; paper left/right edges land ≈315px in from each side.
      Polaroids are sized smaller so they frame the letter without crowding it. */
-  /* At 1200px scene, paper left/right edges land ≈344px in from each side.
-     Polaroid inner edges are placed at that same offset so they just touch the paper. */
+  /* Polaroids are anchored to the paper edges using percentages.
+     The visible paper sits in the centre ~28% of the 1920×1080 image,
+     so its edges land at ~36% from each side of the scene.
+     calc(36% - width*s) keeps the polaroid's inner edge exactly at that
+     boundary at every viewport width — no overlap, no drifting. */
   .polaroid-1 {
     width: calc(125px * var(--s)); height: calc(150px * var(--s));
-    top: calc(30px * var(--s)); left: calc(285px * var(--s));
+    top: calc(30px * var(--s));
+    left: calc(34% - 125px * var(--s));
     transform: rotate(-6deg);
     z-index: 4;
   }
@@ -812,7 +816,8 @@
 
   .polaroid-2 {
     width: calc(100px * var(--s)); height: calc(120px * var(--s));
-    top: calc(175px * var(--s)); left: calc(305px * var(--s));
+    top: calc(175px * var(--s));
+    left: calc(34% - 100px * var(--s));
     transform: rotate(-10deg);
     z-index: 3;
   }
@@ -821,19 +826,21 @@
   /* Bottom-right cluster */
   .polaroid-3 {
     width: calc(125px * var(--s)); height: calc(150px * var(--s));
-    bottom: calc(30px * var(--s)); right: calc(285px * var(--s));
-    transform: rotate(7deg);
+    bottom: calc(45px * var(--s));
+    right: calc(34% - 125px * var(--s));
+    transform: rotate(9deg);
     z-index: 4;
   }
-  .polaroid-3:hover { transform: rotate(2deg) translateY(-6px); }
+  .polaroid-3:hover { transform: rotate(4deg) translateY(-6px); }
 
   .polaroid-4 {
     width: calc(100px * var(--s)); height: calc(120px * var(--s));
-    bottom: calc(160px * var(--s)); right: calc(305px * var(--s));
-    transform: rotate(-5deg);
+    bottom: calc(175px * var(--s));
+    right: calc(34% - 100px * var(--s));
+    transform: rotate(-7deg);
     z-index: 3;
   }
-  .polaroid-4:hover { transform: rotate(-1deg) translateY(-6px); }
+  .polaroid-4:hover { transform: rotate(-3deg) translateY(-6px); }
 
   /* ─── Mobile layout: stacked, polaroids shown small ─── */
   @media (max-width: 920px) {

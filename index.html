@@ -726,45 +726,22 @@
        Below 920px the @media rule below switches to vertical mode and
        hides the polaroids entirely. */
     --s: clamp(0.8, calc(0.8 + (100vw - 920px) / 180px * 0.2), 1);
-    max-width: calc(720px * var(--s));
-    min-height: calc(560px * var(--s));
+    max-width: calc(1200px * var(--s));
+    min-height: calc(680px * var(--s));
     margin: 0 auto 80px;
     z-index: 2;
   }
 
-  .letter-paper {
-    /* Layered paper texture: SVG fractal noise grain + warm cream base + subtle fiber lines */
-    background-color: #fbf6ea;
-    background-image:
-      url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.55  0 0 0 0 0.42  0 0 0 0 0.22  0 0 0 0.18 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>"),
-      repeating-linear-gradient(2deg, rgba(150,110,60,0.025) 0 1px, transparent 1px 7px),
-      radial-gradient(ellipse at 30% 20%, rgba(255,255,255,0.55), transparent 60%),
-      radial-gradient(ellipse at 70% 80%, rgba(180,150,90,0.08), transparent 70%),
-      linear-gradient(135deg, #fdfaf1 0%, #f7efdb 100%);
-    background-blend-mode: multiply, multiply, normal, normal, normal;
-    padding: calc(56px * var(--s)) calc(110px * var(--s)) calc(64px * var(--s));
-    box-shadow:
-      inset 0 1px 0 rgba(255,255,255,0.6),
-      inset 0 -2px 6px rgba(140,100,40,0.08),
-      0 14px 50px rgba(0,0,0,0.16),
-      0 3px 8px rgba(60,40,10,0.08);
-    font-family: var(--font-hand);
-    font-size: calc(14px + 4px * var(--s));
-    line-height: 1.95;
-    color: #2a2418;
-    position: relative;
-    cursor: default;
+  .about-paper-img {
+    display: block;
+    width: 100%;
+    height: auto;
+    user-select: none;
+    filter: drop-shadow(0 14px 40px rgba(0,0,0,0.18)) drop-shadow(0 3px 8px rgba(60,40,10,0.1));
     transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
-    /* Torn paper edges — all four sides ragged */
-    clip-path: polygon(
-      0% 3%, 4% 1%, 8% 3%, 12% 0%, 16% 3%, 20% 1%, 24% 4%, 28% 1%, 32% 3%, 36% 0%, 40% 2%, 44% 4%, 48% 1%, 52% 3%, 56% 0%, 60% 2%, 64% 4%, 68% 1%, 72% 3%, 76% 0%, 80% 2%, 84% 4%, 88% 1%, 92% 3%, 96% 0%, 100% 3%,
-      98% 8%, 100% 16%, 97% 24%, 99% 32%, 96% 40%, 100% 48%, 97% 56%, 99% 64%, 96% 72%, 100% 80%, 97% 88%, 99% 96%,
-      96% 100%, 88% 97%, 80% 100%, 72% 98%, 64% 100%, 56% 97%, 48% 100%, 40% 98%, 32% 100%, 24% 97%, 16% 100%, 8% 98%, 0% 100%,
-      2% 92%, 0% 84%, 3% 76%, 1% 68%, 4% 60%, 0% 52%, 3% 44%, 1% 36%, 4% 28%, 0% 20%, 3% 12%, 1% 4%
-    );
   }
 
-  .letter-paper:hover {
+  .about-paper-img:hover {
     transform: translateY(-4px);
   }
 
@@ -820,17 +797,22 @@
   }
 
   /* Top-left cluster — sizes/offsets scale with --s (1.0 ≥1100px, 0.8 at 920px) */
+  /* Polaroids sit just inside the scene, overlapping the visible torn-paper edges.
+     Scene is 1100px; paper left/right edges land ≈315px in from each side.
+     Polaroids are sized smaller so they frame the letter without crowding it. */
+  /* At 1200px scene, paper left/right edges land ≈344px in from each side.
+     Polaroid inner edges are placed at that same offset so they just touch the paper. */
   .polaroid-1 {
-    width: calc(160px * var(--s)); height: calc(190px * var(--s));
-    top: calc(20px * var(--s)); left: calc(-120px * var(--s));
+    width: calc(125px * var(--s)); height: calc(150px * var(--s));
+    top: calc(30px * var(--s)); left: calc(285px * var(--s));
     transform: rotate(-6deg);
     z-index: 4;
   }
   .polaroid-1:hover { transform: rotate(-2deg) translateY(-6px); }
 
   .polaroid-2 {
-    width: calc(120px * var(--s)); height: calc(140px * var(--s));
-    top: calc(200px * var(--s)); left: calc(-90px * var(--s));
+    width: calc(100px * var(--s)); height: calc(120px * var(--s));
+    top: calc(175px * var(--s)); left: calc(305px * var(--s));
     transform: rotate(-10deg);
     z-index: 3;
   }
@@ -838,37 +820,58 @@
 
   /* Bottom-right cluster */
   .polaroid-3 {
-    width: calc(160px * var(--s)); height: calc(190px * var(--s));
-    bottom: calc(20px * var(--s)); right: calc(-120px * var(--s));
+    width: calc(125px * var(--s)); height: calc(150px * var(--s));
+    bottom: calc(30px * var(--s)); right: calc(285px * var(--s));
     transform: rotate(7deg);
     z-index: 4;
   }
   .polaroid-3:hover { transform: rotate(2deg) translateY(-6px); }
 
   .polaroid-4 {
-    width: calc(120px * var(--s)); height: calc(140px * var(--s));
-    bottom: calc(180px * var(--s)); right: calc(-80px * var(--s));
+    width: calc(100px * var(--s)); height: calc(120px * var(--s));
+    bottom: calc(160px * var(--s)); right: calc(305px * var(--s));
     transform: rotate(-5deg);
     z-index: 3;
   }
   .polaroid-4:hover { transform: rotate(-1deg) translateY(-6px); }
 
-  /* ─── Vertical mode: below 920px the letter goes vertical, polaroids vanish.
-     Only letter + the about-cta block are visible in this layout. ─── */
+  /* ─── Mobile layout: stacked, polaroids shown small ─── */
   @media (max-width: 920px) {
     .letter-scene {
       max-width: 540px;
       min-height: auto;
       margin-bottom: 56px;
     }
-    .letter-paper {
-      padding: 48px 56px 56px;
-      font-size: 15px;
+    /* Reset polaroid padding for small sizes */
+    .polaroid { padding: 6px 6px 22px; }
+    /* Smaller polaroids, hugging the paper edges.
+       Paper occupies middle ~28% of the 1920×1080 image so its
+       left/right edges sit at ~36% from each scene edge.
+       calc(36% - width) places the polaroid's inner edge right there. */
+    .polaroid-1 {
+      display: block;
+      width: 80px; height: 95px;
+      top: 12px; left: calc(36% - 93px);
+      transform: rotate(-6deg); z-index: 4;
     }
-    .polaroid-1,
-    .polaroid-2,
-    .polaroid-3,
-    .polaroid-4 { display: none; }
+    .polaroid-2 {
+      display: block;
+      width: 62px; height: 75px;
+      top: 95px; left: calc(36% - 73px);
+      transform: rotate(-10deg); z-index: 3;
+    }
+    .polaroid-3 {
+      display: block;
+      width: 80px; height: 95px;
+      bottom: 12px; right: calc(36% - 93px);
+      transform: rotate(7deg); z-index: 4;
+    }
+    .polaroid-4 {
+      display: block;
+      width: 62px; height: 75px;
+      bottom: 85px; right: calc(36% - 73px);
+      transform: rotate(-5deg); z-index: 3;
+    }
   }
 
   /* ─── About CTA (postscript / blog teaser) ─── */
@@ -1361,13 +1364,6 @@
     #work { padding: 64px 20px 48px; }
     #sideworks { padding-bottom: 56px; }
 
-    /* Phone-only letter tweaks — stacked layout already set at the 1100px break.
-       Just narrow the letter padding and font for small screens. */
-    .letter-paper {
-      padding: 40px 32px 44px;
-      font-size: 14px;
-      margin-bottom: 12px;
-    }
     /* #about and #experience paddings now flow from --n — no override needed */
     .about-cta { margin-top: 48px; }
     .about-cta-title { font-size: 22px; }
@@ -1381,7 +1377,6 @@
     .hero-headline { font-size: clamp(44px, 13vw, 62px); }
     .hero-sub { font-size: 13px; max-width: 280px; }
     .char-card { width: 110px; }
-    .letter-paper { padding: 22px 22px; font-size: 12px; }
     .exp-details { padding-left: 0; }
     .footer-nav { gap: 18px; }
     .footer-scene { max-height: 220px; }
@@ -1797,17 +1792,7 @@
       <img class="polaroid-img" src="assets/boat.webp" alt="On a boat" loading="lazy" decoding="async">
     </div>
 
-    <div class="letter-paper">
-      <p class="letter-salutation">Dear Reader,</p>
-      <div class="letter-body">
-        <p>I'm Riyasat, and I build software designed to make life a little less annoying. Whether I'm optimizing a data pipeline or messing around with new AI tools, my focus is always on cutting out the friction and building things that just work.</p>
-
-        <p>Away from the screen, I'm usually tracking down vintage handheld consoles, hunting for secondhand gems, or spending way too much money on good coffee. If something is well-crafted and functional, whether it's a modern app or a 90s Game Boy, I'm probably obsessed with it.</p>
-      </div>
-      <div class="letter-sign">
-        Warm regards,<br>Riyasat
-      </div>
-    </div>
+    <img class="about-paper-img" src="assets/pageabout.png" alt="A letter from Riyasat" draggable="false">
 
     <!-- Bottom-right cluster: secondary photo behind + portrait in front -->
     <div class="polaroid polaroid-4" title="late-night coffee">

@@ -10,18 +10,18 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" as="image" href="assets/herophoto.JPG" fetchpriority="high">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Fraunces:ital,wght@0,400;1,400&family=Host+Grotesk:wght@400;600&family=Caveat:wght@400;600&display=swap" media="print" onload="this.media='all';this.onload=null">
-<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Fraunces:ital,wght@0,400;1,400&family=Host+Grotesk:wght@400;600&family=Caveat:wght@400;600&display=swap"></noscript>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Fraunces:ital,wght@0,400;0,700;1,400;1,700&family=Host+Grotesk:wght@400;600&family=Caveat:wght@400;600&display=swap" media="print" onload="this.media='all';this.onload=null">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Fraunces:ital,wght@0,400;0,700;1,400;1,700&family=Host+Grotesk:wght@400;600&family=Caveat:wght@400;600&display=swap"></noscript>
 
 <style>
   /* ─── Reset & Base ─── */
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
-    --sky-top: #3a6bca;
-    --sky-mid: #6fa0e8;
-    --sky-fade: #c8daf7;
-    --sky-white: #f0f5ff;
+    --sky-top: #2a52b0;
+    --sky-mid: #5a8edd;
+    --sky-fade: #b8cef5;
+    --sky-white: #e8f0ff;
     --off-white: #fafafa;
     --text-dark: #101010;
     --text-mid: #555;
@@ -60,16 +60,20 @@
     z-index: 100;
     display: flex;
     align-items: center;
-    gap: clamp(6px, 2.8vw, 40px);
-    padding: clamp(6px, 0.7vw, 10px) clamp(10px, 2vw, 28px);
+    gap: clamp(16px, 3.5vw, 56px);
+    padding: clamp(11px, 0.7vw, 20px) clamp(10px, 2vw, 28px);
     margin-top: 14px;
-    background: rgba(255,255,255,0.18);
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.3);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
     border-radius: 100px;
-    transition: background 0.3s, box-shadow 0.3s;
+    transition: background 0.3s, border-color 0.3s, box-shadow 0.3s;
   }
 
   #navbar.scrolled {
-    background: rgba(255,255,255,0.92);
+    background: rgba(255,255,255,0.85);
+    border-color: rgba(0,0,0,0.08);
     box-shadow: 0 2px 24px rgba(0,0,0,0.09);
   }
 
@@ -102,9 +106,9 @@
   #navbar a:hover { opacity: 1; }
   #navbar a:hover::after { transform: scaleX(1); }
 
-  .nav-logo {
+  #navbar .nav-logo {
     font-family: var(--font-display);
-    font-size: clamp(12px, calc(9px + 0.55vw), 17px);
+    font-size: clamp(13px, calc(10px + 0.55vw), 17px);
     letter-spacing: 0.05em;
     font-style: italic;
     color: white;
@@ -166,9 +170,10 @@
     width: 100%;
     height: auto;
     pointer-events: none;
-    opacity: 0.85;
+    opacity: 0.65;
     mix-blend-mode: multiply;
     z-index: 1;
+    filter: url(#birds-fx);
   }
 
   .hero-inner {
@@ -186,7 +191,7 @@
     font-family: var(--font-body);
     font-size: 14px;
     color: rgba(255,255,255,0.85);
-    margin-bottom: 16px;
+    margin-bottom: 6px;
     letter-spacing: 0.01em;
   }
 
@@ -200,8 +205,8 @@
     display: inline-flex;
     align-items: center;
     gap: 7px;
-    background: rgba(255,255,255,0.18);
-    border: 1px solid rgba(255,255,255,0.4);
+    background: rgba(110,255,176,0.12);
+    border: 1px solid rgba(110,255,176,0.3);
     backdrop-filter: blur(8px);
     border-radius: 100px;
     padding: 6px 14px;
@@ -228,7 +233,7 @@
     font-size: clamp(72px, 10vw, 136px);
     font-weight: 400;
     color: white;
-    line-height: 1.02;
+    line-height: 0.95;
     letter-spacing: -0.02em;
     margin-bottom: 20px;
   }
@@ -241,9 +246,13 @@
     font-size: 0.82em;
   }
 
+  .hero-hl-main {
+    font-size: calc(1em + 4px);
+  }
+
   .hero-sub {
     font-family: var(--font-body);
-    font-size: 15px;
+    font-size: 13px;
     color: rgba(255,255,255,0.8);
     max-width: 380px;
     line-height: 1.65;
@@ -719,9 +728,10 @@
     width: 100%;
     height: auto;
     pointer-events: none;
-    opacity: 0.85;
+    opacity: 0.65;
     mix-blend-mode: multiply;
     z-index: 1;
+    filter: url(#birds-fx);
   }
 
   /* Letter collage */
@@ -1407,7 +1417,7 @@
   @media (max-width: 768px) {
     #home { padding: 100px 24px 60px; min-height: 100vh; }
     .hero-headline { font-size: clamp(54px, 14vw, 80px); }
-    .hero-sub { font-size: 14px; max-width: 320px; }
+    .hero-sub { font-size: 12px; max-width: 320px; }
     .char-card { width: 120px; margin-top: 28px; }
 
     #work { padding: 64px 20px 48px; }
@@ -1424,7 +1434,7 @@
 
   @media (max-width: 480px) {
     .hero-headline { font-size: clamp(44px, 13vw, 62px); }
-    .hero-sub { font-size: 13px; max-width: 280px; }
+    .hero-sub { font-size: 11px; max-width: 280px; }
     .char-card { width: 110px; }
     .exp-details { padding-left: 0; }
     .footer-nav { gap: 18px; }
@@ -1608,6 +1618,17 @@
   <div class="cloud cloud-2"></div>
   <div class="cloud cloud-3"></div>
 
+  <!-- Birds blur + grain filter -->
+  <svg style="display:none" aria-hidden="true">
+    <filter id="birds-fx" x="-5%" y="-5%" width="110%" height="110%" color-interpolation-filters="sRGB">
+      <feGaussianBlur stdDeviation="0.55" result="blurred"/>
+      <feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="3" stitchTiles="stitch" result="noise"/>
+      <feColorMatrix type="saturate" values="0" in="noise" result="grayNoise"/>
+      <feBlend in="blurred" in2="grayNoise" mode="overlay" result="blended"/>
+      <feComposite in="blended" in2="SourceGraphic" operator="in"/>
+    </filter>
+  </svg>
+
   <!-- Lottie birds animation -->
   <div id="birds-lottie"></div>
 
@@ -1619,7 +1640,7 @@
     <p class="hero-eyebrow">Hello, from the developer's desk.</p>
 
     <h1 class="hero-headline">
-      Intuitive<br>
+      <span class="hero-hl-main">Intuitive</span><br>
       <em>by design</em>
     </h1>
     <p class="hero-sub">
@@ -2358,20 +2379,22 @@
 
   // ─── Lottie birds ───
   if (typeof lottie !== 'undefined' && window.birdsAnimationData) {
-    lottie.loadAnimation({
+    const birdsHero = lottie.loadAnimation({
       container: document.getElementById('birds-lottie'),
       renderer: 'svg',
       loop: true,
       autoplay: true,
       animationData: window.birdsAnimationData
     });
-    lottie.loadAnimation({
+    birdsHero.setSpeed(0.85);
+    const birdsAbout = lottie.loadAnimation({
       container: document.getElementById('birds-lottie-about'),
       renderer: 'svg',
       loop: true,
       autoplay: true,
       animationData: window.birdsAnimationData
     });
+    birdsAbout.setSpeed(0.85);
   }
 
   // Skills accordion

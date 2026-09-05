@@ -9,3 +9,7 @@ HANDOFF.md
 # Editor
 .vscode/
 .idea/
+
+# Local project memory (not published)
+CLAUDE.md
+PROJECT_BRIEF.md

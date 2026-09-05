@@ -394,17 +394,16 @@
     margin: 0 auto;
   }
 
-  /* Bento grid: 3-col on desktop with TTC spanning 2x2 in the top-left */
+  /* Bento grid: 2-col on desktop with TTC as full-width banner on top */
   .bento-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     grid-auto-rows: minmax(280px, auto);
     gap: 20px;
     margin-bottom: 72px;
   }
   .bento-card[data-project="ttc"] {
     grid-column: span 2;
-    grid-row: span 2;
   }
 
   /* Card shell */
@@ -481,7 +480,6 @@
   .bento-visual-capto      { background: linear-gradient(135deg, #f1ebf7 0%, #ddd0ea 100%); }
   .bento-visual-focuspilot { background: linear-gradient(135deg, #fdebe2 0%, #f4cdbb 100%); }
   .bento-visual-pacman     { background: linear-gradient(135deg, #1a1535 0%, #2d1f56 100%); }
-  .bento-card[data-project="capto"] { grid-column: span 2; }
 
   /* Body */
   .bento-body {
